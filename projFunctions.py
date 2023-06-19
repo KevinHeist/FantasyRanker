@@ -9,7 +9,6 @@ def ScrapingPlayersTGD():
 
     # This returns the first table which is our targetted table
     dfRanks = df[0]
-
     # Assigns values into player dict in the form 'Player': [RK, POSRK]
     for i in range(300):
         # NameEditor ensures each dict has the same str for each player's name
@@ -17,7 +16,7 @@ def ScrapingPlayersTGD():
         ovrRank = dfRanks['RK'][i]
         posRank = dfRanks['POSRK'][i]
         # Stores in the structure of 'PlayerName': ('ovrRank','posRank')
-        playerDict[name] = [ovrRank, posRank]
+        playerDict[name] = [str(ovrRank), posRank]
     
     return playerDict
 
@@ -83,4 +82,43 @@ def NameDictChecker(dict1, dict2):
     # Printing the two arrays to find which names are not in both dicts
     print(sorted(notFoundNames1))
     print(sorted(notFoundNames2))
+
+# Used to put the players into one dict, if they both have the same player append the rank they have
+def CombineFunction(dict1, dict2, newDict):
+    # Goes through each element of the dict
+    for (key1, val1), (key2, val2) in zip(dict1.items(), dict2.items()):
+        # std placeholder value, allows for you to append each of the new rankings easier
+        std = [[], []]
+        # val will be in the form (ovrRank, posRank)
+
+        # create new dict if the player is not in dict1
+        if key1 not in newDict:
+            newDict[key1] = std
+            newDict[key1] = std[0].append(val1[0])
+            newDict[key1] = std[1].append(val1[1])
+            newDict[key1] = std
+            std = [[], []]
+        else:
+            # appends if player is already in from dict2
+            std = newDict[key1]
+            newDict[key1] = std[0].append(val1[0])
+            newDict[key1] = std[1].append(val1[1])
+            newDict[key1] = std
+            std = [[], []]
+        
+        # create new dict if the player is not in dict2
+        if key2 not in newDict:
+            newDict[key2] = std
+            newDict[key2] = std[0].append(val2[0])
+            newDict[key2] = std[1].append(val2[1])
+            newDict[key2] = std
+            std = [[], []]
+        else:
+            # appends if player is already in from dict1
+            std = newDict[key2]
+            newDict[key2] = std[0].append(val2[0])
+            newDict[key2] = std[1].append(val2[1])
+            newDict[key2] = std
+            std = [[], []]
+    return newDict
     
