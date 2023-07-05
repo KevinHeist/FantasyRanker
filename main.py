@@ -21,4 +21,16 @@ fullPlayerDict = CombineFunction(playerDictTGD, playerDictPFF, fullPlayerDict)
 
 # player [[rank1, rank2], [posRank1, posRank2]]
 # some might not have two rankings meaning there is only collectively in both the dicts
-print(fullPlayerDict)
+# Synthesizes the two dicts and averages their rankings
+RankCombinerFunction(fullPlayerDict)
+
+import pandas as pd
+# Converting into a dataframe, transposes it to make it be rows per player
+df = pd.DataFrame(fullPlayerDict).T
+# Adding column names
+df.columns = ['Overall', 'By-Position']
+# Sorting by overall rank
+df = df.sort_values([df.columns[0], df.columns[1]])
+
+df.to_excel('DynastyRankings.xlsx')
+print(df.head(10))

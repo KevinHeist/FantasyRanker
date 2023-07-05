@@ -1,7 +1,7 @@
 import requests as rq
 import pandas as pd
 
-urlTGD = 'https://thegameday.com/fantasy/football/dynasty/'
+urlTGD = 'https://thegameday.com/fantasy/football/rankings/dynasty/'
 
 def ScrapingPlayersTGD():
     playerDict = {}
@@ -121,4 +121,34 @@ def CombineFunction(dict1, dict2, newDict):
             newDict[key2] = std
             std = [[], []]
     return newDict
-    
+
+# Takes the elements of the dicts and averages out their rankings in the same dict
+def RankCombinerFunction(combDict):
+    for player, (ovrRank, posRank) in combDict.items():
+        # player = playername, ovrRank = [rank1, rank2], posRank = [posRank1, posRank2]
+        # Checks if there are two elements in the item meaning both sites had data on the player
+        if len(ovrRank) == 2:
+            temp1 = (int(ovrRank[0]) + int(ovrRank[1])) / 2
+        else:
+            temp1 = int(ovrRank[0])
+        if len(posRank) == 2:
+            # Each of these are used to ensure that the appropriate chars are taken from the pos rankings ignoring
+            # the position that goes along with the rankings
+            if len(posRank[0]) == 3:
+                tempPosRank1 = int(posRank[0][-1])
+            elif len(posRank[0]) == 4:
+                tempPosRank1 = int(posRank[0][-2:])
+            elif len(posRank[0]) == 5:
+                tempPosRank1 = int(posRank[0][-3:])
+            if len(posRank[1]) == 3:
+                tempPosRank2 = int(posRank[1][-1])
+            elif len(posRank[1]) == 4:
+                tempPosRank2 = int(posRank[1][-2:])
+            elif len(posRank[1]) == 5:
+                tempPosRank2 = int(posRank[1][-3:])
+            temp2 = (tempPosRank1+tempPosRank2) / 2
+            tempPosRank2, tempPosRank1 = 0,0
+            temp2 = posRank[0][0:2] + str(temp2)
+        else:
+            temp2 = posRank[0]
+        combDict[player] = [temp1, temp2]
